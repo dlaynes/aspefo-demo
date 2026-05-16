@@ -1,13 +1,12 @@
-import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Phone, MapPin, MessageSquare } from 'lucide-react';
 
 export default function Contact() {
   return (
     <div className="bg-aspefo-bg min-h-screen py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-12 border-b border-aspefo-border pb-8">
-          <span className="text-aspefo-accent font-bold uppercase tracking-[4px] text-[10px] mb-2 block">Contacto Directo</span>
-          <h1 className="text-4xl font-extrabold text-aspefo-navy tracking-tighter">Hablemos</h1>
+          <span className="text-aspefo-accent font-bold uppercase tracking-[4px] text-[10px] mb-2 block">Escribe tus consultas</span>
+          <h1 className="text-4xl font-extrabold text-aspefo-navy tracking-tighter">Contacto</h1>
         </header>
 
         <div className="grid grid-cols-12 gap-4">

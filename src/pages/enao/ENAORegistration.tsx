@@ -131,7 +131,7 @@ export default function ENAORegistration() {
       </div>
 
       <div className="bg-white border border-aspefo-border rounded-lg shadow-sm overflow-hidden">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={() => false}>
           <AnimatePresence mode="wait">
             {/* Step 1: Datos Generales */}
             {step === 1 && (
@@ -443,7 +443,8 @@ export default function ENAORegistration() {
               </button>
             ) : (
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 className="bg-emerald-600 text-white px-10 py-3 rounded-sm font-black text-[10px] uppercase tracking-[3px] flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-900/10"
               >
                 Finalizar Registro <ArrowRight size={16} />
