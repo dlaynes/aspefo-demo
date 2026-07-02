@@ -1,22 +1,43 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { LogIn, User, Lock, ArrowRight } from 'lucide-react';
+import { LogIn, User, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { authApi } from '../../services/api';
 
 export default function ENAOLogin() {
   const [docNumber, setDocNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate successful login
-    navigate('/enao/panel');
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await authApi.login({ docNumber, password });
+      const role = response.role || 'APPLICANT';
+      login(response.token, role, response.applicant);
+
+      if (role === 'ADMIN' || role === 'MAINTAINER') {
+        navigate('/enao/admin');
+      } else {
+        navigate('/enao/panel');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Error al iniciar sesión. Verifique sus credenciales.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="max-w-md mx-auto px-4 py-20">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white border border-aspefo-border rounded-lg shadow-xl shadow-blue-900/5 overflow-hidden"
@@ -30,19 +51,26 @@ export default function ENAOLogin() {
         </div>
 
         <form onSubmit={handleLogin} className="p-8 space-y-6">
+          {error && (
+            <div className="bg-red-50 border border-red-100 text-red-600 p-3 rounded text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
+              <AlertCircle size={16} />
+              {error}
+            </div>
+          )}
+
           <div className="space-y-2">
             <label className="block text-[10px] font-black uppercase tracking-[3px] text-slate-400">
-              Número de Documento (DNI)
+              Usuario (DNI / admin / maintainer)
             </label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-              <input 
+              <input
                 required
-                type="text" 
+                type="text"
                 value={docNumber}
                 onChange={(e) => setDocNumber(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-sm py-3 pl-10 pr-4 text-[11px] font-bold tracking-widest focus:outline-none focus:border-aspefo-accent transition-colors"
-                placeholder="INGRESE SU DNI"
+                placeholder="INGRESE SU USUARIO"
               />
             </div>
           </div>
@@ -53,9 +81,9 @@ export default function ENAOLogin() {
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-              <input 
+              <input
                 required
-                type="password" 
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-sm py-3 pl-10 pr-4 text-[11px] font-bold tracking-widest focus:outline-none focus:border-aspefo-accent transition-colors"
@@ -64,11 +92,12 @@ export default function ENAOLogin() {
             </div>
           </div>
 
-          <button 
+          <button
             type="submit"
-            className="w-full bg-aspefo-blue text-white py-4 rounded-sm font-black text-[10px] uppercase tracking-[3px] flex items-center justify-center gap-2 hover:bg-aspefo-navy transition-all shadow-lg shadow-blue-900/10"
+            disabled={loading}
+            className="w-full bg-aspefo-blue text-white py-4 rounded-sm font-black text-[10px] uppercase tracking-[3px] flex items-center justify-center gap-2 hover:bg-aspefo-navy transition-all shadow-lg shadow-blue-900/10 disabled:opacity-70"
           >
-            Ingresar al Panel <ArrowRight size={16} />
+            {loading ? 'INGRESANDO...' : 'Ingresar al Panel'} <ArrowRight size={16} />
           </button>
 
           <div className="pt-6 border-t border-slate-100 flex flex-col gap-4 text-center">

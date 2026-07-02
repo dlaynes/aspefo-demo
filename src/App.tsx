@@ -1,9 +1,4 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import News from './pages/News';
@@ -16,6 +11,13 @@ import ENAOWelcome from './pages/enao/ENAOWelcome';
 import ENAOPanel from './pages/enao/ENAOPanel';
 import ENAORegistration from './pages/enao/ENAORegistration';
 import ENAOLogin from './pages/enao/ENAOLogin';
+import AdminPanel from './pages/enao/AdminPanel';
+import { useAuth } from './contexts/AuthContext';
+
+function AdminGuard({ children }: { children: React.ReactNode }) {
+  const { isStaff } = useAuth();
+  return isStaff ? <>{children}</> : <Navigate to="/enao/login" replace />;
+}
 
 export default function App() {
   return (
@@ -35,6 +37,14 @@ export default function App() {
             <Route path="login" element={<ENAOLogin />} />
             <Route path="panel" element={<ENAOPanel />} />
             <Route path="registro" element={<ENAORegistration />} />
+            <Route
+              path="admin"
+              element={
+                <AdminGuard>
+                  <AdminPanel />
+                </AdminGuard>
+              }
+            />
           </Route>
         </Route>
       </Routes>

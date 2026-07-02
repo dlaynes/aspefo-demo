@@ -1,17 +1,23 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Home, ClipboardList, LayoutDashboard } from 'lucide-react';
+import { Home, ClipboardList, LayoutDashboard, Shield } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function ENAOLayout() {
+  const { isStaff } = useAuth();
+
   const enaoNavItems = [
     { name: 'Portada Principal', path: '/', icon: Home },
     { name: 'Inicio ENAO', path: '/enao', end: true, icon: ClipboardList },
     { name: 'Acceso Intranet', path: '/enao/login', icon: LayoutDashboard },
   ];
 
+  if (isStaff) {
+    enaoNavItems.push({ name: 'Admin', path: '/enao/admin', icon: Shield });
+  }
+
   return (
     <div className="bg-slate-50 min-h-screen">
-      {/* ENAO Sub-Navigation Bar */}
       <nav className="bg-aspefo-navy text-white border-b border-white/10 sticky top-20 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-12">
           <div className="flex space-x-1 h-full">
@@ -22,8 +28,8 @@ export default function ENAOLayout() {
                 end={item.end}
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-4 h-full text-[10px] font-black uppercase tracking-[2px] transition-all border-b-2 ${
-                    isActive 
-                      ? 'bg-white/10 border-aspefo-accent text-white' 
+                    isActive
+                      ? 'bg-white/10 border-aspefo-accent text-white'
                       : 'border-transparent text-slate-400 hover:text-white hover:bg-white/5'
                   }`
                 }
@@ -41,7 +47,6 @@ export default function ENAOLayout() {
         </div>
       </nav>
 
-      {/* Main ENAO Content Area */}
       <main className="py-8">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
